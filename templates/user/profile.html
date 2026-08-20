@@ -1,0 +1,80 @@
+{% extends 'base.html' %} 
+{% block title %}My Profile & Skill Analytics{% endblock %} 
+
+{% block content %}
+<div class="page-container" style="max-width: 1200px; margin: 0 auto; padding: 20px;">
+  <!-- Profile Header Card -->
+  <div style="background: rgba(0, 0, 0, 0.25); border: 1px solid var(--border); border-radius: 16px; padding: 28px; margin-bottom: 30px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.2);">
+    <div style="display: flex; align-items: center; gap: 20px;">
+      <div style="width: 70px; height: 70px; border-radius: 20px; background: linear-gradient(135deg, var(--accent), var(--accent-2)); display: flex; align-items: center; justify-content: center; font-size: 2rem; font-weight: 800; color: white;">
+        {{ user.username[0] | upper if user.username else 'U' }}
+      </div>
+      <div>
+        <h2 style="margin: 0 0 4px; font-size: 1.6rem; color: var(--text);">{{ user.username }}</h2>
+        <div style="color: var(--muted); font-size: 0.9rem; margin-bottom: 8px;">{{ user.email }}</div>
+        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+          <span style="background: rgba(245, 158, 11, 0.15); color: #f59e0b; padding: 4px 12px; border-radius: 12px; font-size: 0.85rem; font-weight: 700;">
+            ⚡ {{ xp }} XP Points
+          </span>
+          <span style="background: rgba(6, 182, 212, 0.15); color: #06b6d4; padding: 4px 12px; border-radius: 12px; font-size: 0.85rem; font-weight: 700;">
+            🔥 {{ streak }} Day Streak
+          </span>
+          <span style="background: rgba(124, 58, 237, 0.15); color: #a78bfa; padding: 4px 12px; border-radius: 12px; font-size: 0.85rem; font-weight: 700;">
+            🔖 {{ bookmarks_count }} Saved Items
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    <div>
+      <a href="{{ url_for('user_logout') }}" class="btn btn-outline" style="padding: 8px 16px; font-size: 0.85rem;">Logout</a>
+    </div>
+  </div>
+
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 24px;">
+    <!-- Achievement Badges -->
+    <div style="background: rgba(0, 0, 0, 0.25); border: 1px solid var(--border); border-radius: 16px; padding: 24px;">
+      <h3 style="margin: 0 0 16px; font-size: 1.2rem; color: var(--text); display: flex; align-items: center; gap: 8px;">
+        <span>🎖️</span> Achievement Badges
+      </h3>
+      
+      <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px;">
+        {% for badge in badges %}
+        <div style="background: #111827; border: 1px solid var(--border); border-radius: 12px; padding: 16px; text-align: center;">
+          <div style="font-size: 2rem; margin-bottom: 6px;">🏅</div>
+          <div style="font-weight: 600; font-size: 0.85rem; color: var(--text);">{{ badge }}</div>
+          <div style="font-size: 0.75rem; color: #34d399; margin-top: 4px;">Unlocked</div>
+        </div>
+        {% endfor %}
+
+        <div style="background: rgba(255,255,255,0.02); border: 1px dashed var(--border); border-radius: 12px; padding: 16px; text-align: center; opacity: 0.6;">
+          <div style="font-size: 2rem; margin-bottom: 6px;">🔒</div>
+          <div style="font-weight: 600; font-size: 0.85rem; color: var(--muted);">DSA Grandmaster</div>
+          <div style="font-size: 0.75rem; color: var(--muted); margin-top: 4px;">Locked</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Skill Analytics Dashboard -->
+    <div style="background: rgba(0, 0, 0, 0.25); border: 1px solid var(--border); border-radius: 16px; padding: 24px;">
+      <h3 style="margin: 0 0 16px; font-size: 1.2rem; color: var(--text); display: flex; align-items: center; gap: 8px;">
+        <span>📊</span> Skill Analytics & Topic Mastery
+      </h3>
+
+      <div style="display: flex; flex-direction: column; gap: 16px;">
+        {% for topic, percent in skills.items() %}
+        <div>
+          <div style="display: flex; justify-content: space-between; font-size: 0.9rem; margin-bottom: 6px;">
+            <span style="font-weight: 600; color: var(--text);">{{ topic }}</span>
+            <span style="font-weight: 700; color: var(--accent);">{{ percent }}% Mastery</span>
+          </div>
+          <div style="height: 10px; background: rgba(255,255,255,0.06); border-radius: 10px; overflow: hidden;">
+            <div style="height: 100%; width: {{ percent }}%; background: linear-gradient(90deg, var(--accent), var(--accent-2)); border-radius: 10px; transition: width 0.8s ease;"></div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

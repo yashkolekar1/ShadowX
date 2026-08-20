@@ -1,59 +1,125 @@
-{% extends 'base.html' %} {% block title %}MCQs{% endblock %} {% block content
-%}
-<h2>Multiple Choice Questions</h2>
-<p>Test your knowledge with these quick quizzes.</p>
+{% extends 'base.html' %} 
+{% block title %}Multiple Choice Questions{% endblock %} 
 
-<div class="filter-buttons">
-  <a
-    href="{{ url_for('user_mcqs') }}"
-    class="btn {% if not selected_topic %}btn-primary{% else %}btn-outline-primary{% endif %}"
-    >All Topics</a
-  >
-  <a
-    href="{{ url_for('user_mcqs', topic='Python') }}"
-    class="btn {% if selected_topic == 'Python' %}btn-primary{% else %}btn-outline-primary{% endif %}"
-    >Python</a
-  >
-  <a
-    href="{{ url_for('user_mcqs', topic='Java') }}"
-    class="btn {% if selected_topic == 'Java' %}btn-primary{% else %}btn-outline-primary{% endif %}"
-    >Java</a
-  >
-  <a
-    href="{{ url_for('user_mcqs', topic='C') }}"
-    class="btn {% if selected_topic == 'C' %}btn-primary{% else %}btn-outline-primary{% endif %}"
-    >C</a
-  >
-  <a
-    href="{{ url_for('user_mcqs', topic='C++') }}"
-    class="btn {% if selected_topic == 'C++' %}btn-primary{% else %}btn-outline-primary{% endif %}"
-    >C++</a
-  >
-  <a
-    href="{{ url_for('user_mcqs', topic='DSA') }}"
-    class="btn {% if selected_topic == 'DSA' %}btn-primary{% else %}btn-outline-primary{% endif %}"
-    >Data Structures & Algorithms</a
-  >
-</div>
-
-{% if mcqs %}
-<div class="card-grid">
-  {% for mcq in mcqs %}
-  <div class="card">
-    <h3 class="card-title">Question: {{ mcq.question }}</h3>
-    <p class="card-description">Options:</p>
-    <ul>
-      {% for option in mcq.options %}
-      <li style="color: #cbd5e0; margin-left: 15px">{{ option }}</li>
-      {% endfor %}
-    </ul>
-    <div class="card-footer">
-      <span>Topic: {{ mcq.topic }}</span>
-      <a href="#" class="btn btn-primary btn-sm">Attempt</a>
+{% block content %}
+<div class="page-container" style="max-width: 1200px; margin: 0 auto; padding: 20px;">
+  <div style="margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
+    <div>
+      <h2 style="margin: 0; font-size: 1.8rem; font-weight: 700; background: linear-gradient(135deg, var(--accent), var(--accent-2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Multiple Choice Questions</h2>
+      <p style="margin: 4px 0 0; color: var(--muted);">Test and strengthen your programming knowledge across languages and computer science fundamentals.</p>
+    </div>
+    <div id="mcq-stats" style="background: rgba(124, 58, 237, 0.1); border: 1px solid rgba(124, 58, 237, 0.2); padding: 8px 16px; border-radius: 20px; font-weight: 600; font-size: 0.9rem;">
+      Score: <span id="correct-count" style="color: #10b981;">0</span> / <span id="attempted-count">0</span> Attempted
     </div>
   </div>
-  {% endfor %}
+
+  <!-- Topic Filters -->
+  <div class="filter-buttons" style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 24px;">
+    <a href="{{ url_for('user_mcqs') }}" class="btn {% if not selected_topic %}btn-primary{% else %}btn-outline{% endif %}" style="padding: 6px 14px; font-size: 0.85rem;">All Topics</a>
+    <a href="{{ url_for('user_mcqs', topic='Python') }}" class="btn {% if selected_topic == 'Python' %}btn-primary{% else %}btn-outline{% endif %}" style="padding: 6px 14px; font-size: 0.85rem;">Python</a>
+    <a href="{{ url_for('user_mcqs', topic='JavaScript') }}" class="btn {% if selected_topic == 'JavaScript' %}btn-primary{% else %}btn-outline{% endif %}" style="padding: 6px 14px; font-size: 0.85rem;">JavaScript</a>
+    <a href="{{ url_for('user_mcqs', topic='Java') }}" class="btn {% if selected_topic == 'Java' %}btn-primary{% else %}btn-outline{% endif %}" style="padding: 6px 14px; font-size: 0.85rem;">Java</a>
+    <a href="{{ url_for('user_mcqs', topic='C') }}" class="btn {% if selected_topic == 'C' %}btn-primary{% else %}btn-outline{% endif %}" style="padding: 6px 14px; font-size: 0.85rem;">C</a>
+    <a href="{{ url_for('user_mcqs', topic='C++') }}" class="btn {% if selected_topic == 'C++' %}btn-primary{% else %}btn-outline{% endif %}" style="padding: 6px 14px; font-size: 0.85rem;">C++</a>
+    <a href="{{ url_for('user_mcqs', topic='DSA') }}" class="btn {% if selected_topic == 'DSA' %}btn-primary{% else %}btn-outline{% endif %}" style="padding: 6px 14px; font-size: 0.85rem;">Data Structures & Algorithms</a>
+    <a href="{{ url_for('user_mcqs', topic='SQL') }}" class="btn {% if selected_topic == 'SQL' %}btn-primary{% else %}btn-outline{% endif %}" style="padding: 6px 14px; font-size: 0.85rem;">SQL</a>
+  </div>
+
+  {% if mcqs %}
+  <div class="card-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 20px;">
+    {% for mcq in mcqs %}
+    <div class="card mcq-card" id="mcq-card-{{ mcq._id }}" style="background: rgba(0, 0, 0, 0.25); border: 1px solid var(--border); border-radius: 12px; padding: 20px; display: flex; flex-direction: column; justify-content: space-between; transition: transform 0.2s ease, border-color 0.2s ease;">
+      <div>
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; margin-bottom: 12px;">
+          <span style="background: rgba(6, 182, 212, 0.15); color: #06b6d4; padding: 4px 10px; border-radius: 12px; font-size: 0.75rem; font-weight: 600;">{{ mcq.topic }}</span>
+        </div>
+        <h3 class="card-title" style="font-size: 1.05rem; line-height: 1.4; margin-bottom: 16px; color: var(--text);">{{ mcq.question }}</h3>
+        
+        <form class="mcq-form" data-mcq-id="{{ mcq._id }}" style="display: flex; flex-direction: column; gap: 10px;">
+          {% for option in mcq.options %}
+          <label style="display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-radius: 8px; background: rgba(255,255,255,0.03); border: 1px solid var(--border); cursor: pointer; transition: all 0.2s ease; font-size: 0.9rem;" class="option-label">
+            <input type="radio" name="option-{{ mcq._id }}" value="{{ option }}" required style="accent-color: var(--accent);">
+            <span>{{ option }}</span>
+          </label>
+          {% endfor %}
+
+          <div class="feedback-area" style="margin-top: 8px; display: none; padding: 10px; border-radius: 8px; font-size: 0.85rem; font-weight: 500;"></div>
+
+          <button type="submit" class="btn btn-primary submit-btn" style="margin-top: 10px; padding: 8px 16px; width: 100%; justify-content: center; font-size: 0.9rem;">
+            Submit Answer
+          </button>
+        </form>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div style="text-align: center; color: var(--muted); padding: 60px 20px; background: rgba(0,0,0,0.15); border-radius: 12px;">
+    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="margin-bottom: 12px; opacity: 0.6;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+    <p style="margin: 0; font-size: 1.1rem;">No MCQs found for this topic yet.</p>
+  </div>
+  {% endif %}
 </div>
-{% else %}
-<p>No MCQs found for this topic yet. Check back later!</p>
-{% endif %} {% endblock %}
+
+<script>
+let attempted = 0;
+let correctCount = 0;
+
+document.querySelectorAll('.mcq-form').forEach(form => {
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const mcqId = form.getAttribute('data-mcq-id');
+    const selectedOption = form.querySelector(`input[name="option-${mcqId}"]:checked`)?.value;
+    const feedbackArea = form.querySelector('.feedback-area');
+    const submitBtn = form.querySelector('.submit-btn');
+
+    if (!selectedOption) return;
+
+    submitBtn.disabled = true;
+    submitBtn.innerText = 'Checking...';
+
+    try {
+      const response = await fetch('/mcqs/verify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ mcq_id: mcqId, selected_option: selectedOption })
+      });
+      const data = await response.json();
+
+      feedbackArea.style.display = 'block';
+      
+      if (data.is_correct) {
+        feedbackArea.style.background = 'rgba(16, 185, 129, 0.15)';
+        feedbackArea.style.border = '1px solid rgba(16, 185, 129, 0.3)';
+        feedbackArea.style.color = '#34d399';
+        feedbackArea.innerHTML = '✨ <strong>Correct Answer!</strong> Great job!';
+        if (!form.dataset.answered) {
+          correctCount++;
+        }
+      } else {
+        feedbackArea.style.background = 'rgba(239, 68, 68, 0.15)';
+        feedbackArea.style.border = '1px solid rgba(239, 68, 68, 0.3)';
+        feedbackArea.style.color = '#f87171';
+        feedbackArea.innerHTML = `❌ <strong>Incorrect.</strong> ${data.explanation}`;
+      }
+
+      if (!form.dataset.answered) {
+        attempted++;
+        form.dataset.answered = "true";
+        document.getElementById('attempted-count').innerText = attempted;
+        document.getElementById('correct-count').innerText = correctCount;
+      }
+
+      submitBtn.innerText = 'Answer Submitted';
+      submitBtn.disabled = true;
+      submitBtn.style.opacity = '0.7';
+
+    } catch (err) {
+      console.error(err);
+      submitBtn.disabled = false;
+      submitBtn.innerText = 'Retry';
+    }
+  });
+});
+</script>
+{% endblock %}

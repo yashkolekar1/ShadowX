@@ -1,0 +1,76 @@
+{% extends 'base.html' %} 
+{% block title %}My Saved Bookmarks{% endblock %} 
+
+{% block content %}
+<div class="page-container" style="max-width: 1200px; margin: 0 auto; padding: 20px;">
+  <div style="margin-bottom: 24px;">
+    <h2 style="margin: 0; font-size: 1.8rem; font-weight: 700; background: linear-gradient(135deg, var(--accent), var(--accent-2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">My Saved Bookmarks</h2>
+    <p style="margin: 4px 0 0; color: var(--muted);">Your favorite saved MCQs, Coding Challenges, and Puzzles for quick review.</p>
+  </div>
+
+  {% if items %}
+  <div class="card-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 20px;">
+    {% for item in items %}
+    <div class="card" style="background: rgba(0, 0, 0, 0.25); border: 1px solid var(--border); border-radius: 12px; padding: 20px; display: flex; flex-direction: column; justify-content: space-between;">
+      <div>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+          <span style="background: rgba(124, 58, 237, 0.15); color: var(--accent); padding: 4px 10px; border-radius: 12px; font-size: 0.75rem; font-weight: 600;">
+            {{ item.item_type }}
+          </span>
+          <span style="background: rgba(6, 182, 212, 0.15); color: #06b6d4; padding: 4px 10px; border-radius: 12px; font-size: 0.75rem; font-weight: 600;">
+            {{ item.get('topic', 'General') }}
+          </span>
+        </div>
+
+        <h3 style="font-size: 1.1rem; margin-bottom: 8px; color: var(--text);">
+          {{ item.title if item.title else item.question }}
+        </h3>
+        
+        {% if item.description %}
+        <p style="color: var(--muted); font-size: 0.9rem; line-height: 1.5; margin-bottom: 14px;">
+          {{ item.description }}
+        </p>
+        {% endif %}
+      </div>
+
+      <div style="margin-top: 16px; border-top: 1px solid var(--border); padding-top: 12px; display: flex; justify-content: space-between; align-items: center;">
+        <button onclick="removeBookmark('{{ item._id }}', this)" class="btn btn-outline" style="padding: 6px 12px; font-size: 0.8rem; color: #ef4444; border-color: rgba(239, 68, 68, 0.3);">
+          Remove Bookmark
+        </button>
+
+        {% if item.item_type == 'MCQ' %}
+        <a href="{{ url_for('user_mcqs', topic=item.get('topic')) }}" class="btn btn-primary btn-sm" style="font-size: 0.8rem;">Attempt MCQ</a>
+        {% elif item.item_type == 'Challenge' %}
+        <a href="{{ url_for('user_challenges', topic=item.get('topic')) }}" class="btn btn-primary btn-sm" style="font-size: 0.8rem;">Solve Challenge</a>
+        {% else %}
+        <a href="{{ url_for('user_puzzles') }}" class="btn btn-primary btn-sm" style="font-size: 0.8rem;">Solve Puzzle</a>
+        {% endif %}
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div style="text-align: center; color: var(--muted); padding: 60px 20px; background: rgba(0,0,0,0.15); border-radius: 12px;">
+    <p style="margin: 0; font-size: 1.1rem;">You have not saved any bookmarks yet.</p>
+  </div>
+  {% endif %}
+</div>
+
+<script>
+async function removeBookmark(id, btn) {
+  try {
+    const res = await fetch('/api/bookmark/toggle', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ item_id: id })
+    });
+    const data = await res.json();
+    if (data.success) {
+      btn.closest('.card').remove();
+    }
+  } catch (e) {
+    console.error(e);
+  }
+}
+</script>
+{% endblock %}

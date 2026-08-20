@@ -1,0 +1,43 @@
+{% extends 'base.html' %} 
+{% block title %}Edit User - Admin Panel{% endblock %} 
+
+{% block content %}
+<div class="page-container" style="max-width: 600px; margin: 0 auto; padding: 20px;">
+  <div style="margin-bottom: 24px;">
+    <h2 style="margin: 0; font-size: 1.8rem; font-weight: 700;">Edit User: {{ user.username }}</h2>
+    <p style="margin: 4px 0 0; color: var(--muted);">Update user account details and permissions.</p>
+  </div>
+
+  <div style="background: rgba(0, 0, 0, 0.25); border: 1px solid var(--border); border-radius: 16px; padding: 24px;">
+    <form method="POST" action="{{ url_for('admin_edit_user', id=user._id) }}" style="display: flex; flex-direction: column; gap: 16px;">
+      <div>
+        <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 6px; color: var(--text);">Username</label>
+        <input type="text" name="username" value="{{ user.username }}" required style="width: 100%; padding: 10px 14px; border-radius: 8px; background: #111827; border: 1px solid var(--border); color: #fff; font-size: 0.9rem;">
+      </div>
+
+      <div>
+        <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 6px; color: var(--text);">Email Address</label>
+        <input type="email" name="email" value="{{ user.email }}" required style="width: 100%; padding: 10px 14px; border-radius: 8px; background: #111827; border: 1px solid var(--border); color: #fff; font-size: 0.9rem;">
+      </div>
+
+      <div>
+        <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 6px; color: var(--text);">Reset Password (leave blank to keep current password)</label>
+        <input type="password" name="password" placeholder="New password (optional)" style="width: 100%; padding: 10px 14px; border-radius: 8px; background: #111827; border: 1px solid var(--border); color: #fff; font-size: 0.9rem;">
+      </div>
+
+      <div>
+        <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 6px; color: var(--text);">Role</label>
+        <select name="role" style="width: 100%; padding: 10px 14px; border-radius: 8px; background: #111827; border: 1px solid var(--border); color: #fff; font-size: 0.9rem; font-weight: 600;">
+          <option value="user" {% if user.get('role') == 'user' %}selected{% endif %}>User (Standard Developer)</option>
+          <option value="admin" {% if user.get('role') == 'admin' %}selected{% endif %}>Administrator</option>
+        </select>
+      </div>
+
+      <div style="display: flex; gap: 12px; margin-top: 10px;">
+        <button type="submit" class="btn btn-primary" style="flex: 1; justify-content: center;">Save Changes</button>
+        <a href="{{ url_for('admin_users_list') }}" class="btn btn-outline" style="padding: 10px 20px;">Cancel</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

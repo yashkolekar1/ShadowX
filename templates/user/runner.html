@@ -1,0 +1,220 @@
+{% extends 'base.html' %} 
+{% block title %}Interactive Live Code Runner{% endblock %} 
+
+{% block content %}
+<div class="page-container" style="max-width: 1400px; margin: 0 auto; padding: 20px;">
+  
+  <!-- Top Bar -->
+  <div style="margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
+    <div>
+      <h2 style="margin: 0; font-size: 1.8rem; font-weight: 700; background: linear-gradient(135deg, var(--accent), var(--accent-2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Interactive Live Code Runner</h2>
+      <p style="margin: 4px 0 0; color: var(--muted);">Multi-language IDE: Compile, interpret, and test Python, JavaScript, SQL, C++, C, Java, HTML, PHP, Ruby, Go, and JSON snippets in real-time.</p>
+    </div>
+
+    <div style="display: flex; gap: 12px; align-items: center;">
+      <select id="langSelect" style="padding: 10px 16px; border-radius: 10px; background: var(--card); border: 1px solid var(--border); color: var(--text); font-weight: 600; font-size: 0.9rem; cursor: pointer;">
+        <option value="Python">Python 3</option>
+        <option value="JavaScript">JavaScript (ES6)</option>
+        <option value="SQL">SQL (SQLite Engine)</option>
+        <option value="HTML">HTML / Web Live Preview</option>
+        <option value="C++">C++ (GCC)</option>
+        <option value="C">C (GCC)</option>
+        <option value="Java">Java (JDK)</option>
+        <option value="PHP">PHP (CLI)</option>
+        <option value="Ruby">Ruby</option>
+        <option value="Go">Go (Golang)</option>
+        <option value="JSON">JSON Validator & Formatter</option>
+      </select>
+
+      <button id="runBtn" onclick="executeRunnerCode()" class="btn btn-primary" style="padding: 10px 24px; font-size: 0.9rem; font-weight: 600; gap: 8px;">
+        ▶ Run Code
+      </button>
+    </div>
+  </div>
+
+  <!-- Editor & Terminal Layout -->
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(440px, 1fr)); gap: 24px;">
+    
+    <!-- Code Editor Panel (Crisp Dark IDE Box) -->
+    <div style="background: var(--glass); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; display: flex; flex-direction: column; backdrop-filter: blur(12px); padding: 18px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 0.85rem; font-weight: 600; color: var(--text);">Source Code</span>
+          <span id="fileNameLabel" style="background: rgba(124, 58, 237, 0.2); color: #a78bfa; padding: 2px 10px; border-radius: 12px; font-size: 0.75rem; font-weight: 600;">main.py</span>
+        </div>
+        <button onclick="loadSampleSnippet()" style="background: none; border: none; color: var(--accent); cursor: pointer; font-size: 0.8rem; font-weight: 600;">🔄 Reset Starter Code</button>
+      </div>
+
+      <div style="position: relative; flex: 1; display: flex;">
+        <div class="line-numbers" style="position: absolute; left: 0; top: 0; bottom: 0; width: 45px; padding: 16px 0; background: #1e293b; border-right: 1px solid rgba(255,255,255,0.1); border-radius: 10px 0 0 10px; color: #94a3b8; font-family: 'JetBrains Mono', monospace; font-size: 13px; line-height: 1.6; text-align: right; user-select: none; padding-right: 10px; box-sizing: border-box;"></div>
+        <textarea id="codeEditor" spellcheck="false" style="width: 100%; height: 420px; background: #0f172a; border: 1px solid var(--border); border-radius: 10px; padding: 16px 16px 16px 55px; color: #38bdf8; font-family: 'JetBrains Mono', 'Fira Code', monospace; font-size: 13.5px; line-height: 1.6; resize: none; outline: none; box-sizing: border-box; box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);"></textarea>
+      </div>
+    </div>
+
+    <!-- Terminal Output Panel (Crisp Dark Console Box) -->
+    <div style="background: var(--glass); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; display: flex; flex-direction: column; backdrop-filter: blur(12px); padding: 18px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+        <span style="font-size: 0.85rem; font-weight: 600; color: var(--text);">Terminal & Execution Console</span>
+        <button onclick="clearTerminal()" style="background: none; border: none; color: var(--muted); cursor: pointer; font-size: 0.8rem;">Clear Console</button>
+      </div>
+
+      <div id="terminalContainer" style="height: 420px; position: relative;">
+        <div id="terminalOutput" style="padding: 16px; height: 100%; overflow-y: auto; font-family: 'JetBrains Mono', 'Fira Code', monospace; font-size: 0.9rem; line-height: 1.6; color: #34d399; white-space: pre-wrap; background: #0b0f19; border: 1px solid var(--border); border-radius: 10px; box-sizing: border-box; box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);">Press "▶ Run Code" to compile & execute...</div>
+        <iframe id="webPreviewFrame" style="display: none; width: 100%; height: 100%; border: 1px solid var(--border); border-radius: 10px; background: #ffffff;"></iframe>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const samples = {
+  Python: `def fibonacci(n):\n    sequence = [0, 1]\n    while len(sequence) < n:\n        sequence.append(sequence[-1] + sequence[-2])\n    return sequence\n\nprint("Fibonacci Sequence (first 10 numbers):")\nprint(fibonacci(10))\n\n# List comprehension demo\nevens = [x for x in range(20) if x % 2 == 0]\nprint("\\nEven numbers up to 20:", evens)`,
+  
+  JavaScript: `function debounce(fn, delay) {\n  let timer;\n  return function(...args) {\n    clearTimeout(timer);\n    timer = setTimeout(() => fn.apply(this, args), delay);\n  };\n}\n\nconst log = (msg) => console.log("Debounced Execution:", msg);\nconst processInput = debounce(log, 300);\n\nconsole.log("Testing JavaScript Execution...");\nprocessInput("User Search Input Received!");`,
+  
+  SQL: `CREATE TABLE developers (\n    id INTEGER PRIMARY KEY,\n    name TEXT NOT NULL,\n    role TEXT NOT NULL,\n    xp INTEGER DEFAULT 0\n);\n\nINSERT INTO developers (name, role, xp) VALUES ('Sarah Conner', 'Backend Lead', 1450);\nINSERT INTO developers (name, role, xp) VALUES ('Nikita Dev', 'Frontend Specialist', 1180);\nINSERT INTO developers (name, role, xp) VALUES ('Arjun Codes', 'Full Stack Dev', 920);\n\nSELECT * FROM developers WHERE xp > 1000 ORDER BY xp DESC;`,
+  
+  HTML: `<!DOCTYPE html>\n<html>\n<head>\n  <style>\n    body { font-family: sans-serif; background: #0f172a; color: #38bdf8; padding: 20px; text-align: center; }\n    .badge { background: #7c3aed; color: #fff; padding: 6px 12px; border-radius: 20px; font-weight: bold; }\n  </style>\n</head>\n<body>\n  <h1>⚡ Live Web Preview</h1>\n  <p>Render interactive HTML & CSS in real-time!</p>\n  <span class="badge">ShadowX Web Runner</span>\n</body>\n</html>`,
+
+  'C++': `#include <iostream>\n#include <vector>\n#include <numeric>\n\nint main() {\n    std::vector<int> numbers = {10, 20, 30, 40, 50};\n    int sum = std::accumulate(numbers.begin(), numbers.end(), 0);\n    \n    std::cout << "ShadowX C++ Runner Output" << std::endl;\n    std::cout << "Sum of elements: " << sum << std::endl;\n    return 0;\n}`,
+  
+  C: `#include <stdio.h>\n\nint main() {\n    printf("Welcome to ShadowX C Compiler Terminal!\\n");\n    for(int i = 1; i <= 5; i++) {\n        printf("Step %d: Processing C Code Execution\\n", i);\n    }\n    return 0;\n}`,
+  
+  Java: `public class Main {\n    public static void main(String[] args) {\n        System.out.println("ShadowX Java JDK Runner");\n        System.out.println("Execution verified successfully!");\n    }\n}`,
+
+  PHP: `<?php\n$user = "Developer";\n$topics = ["Python", "JavaScript", "SQL", "C++"];\n\necho "Hello $user!\\nAvailable Skills:\\n";\nforeach ($topics as $index => $lang) {\n    echo ($index + 1) . ". " . $lang . "\\n";\n}\n?>`,
+
+  Ruby: `def calculate_factorial(n)\n  (1..n).reduce(1, :*)\nend\n\nputs "Ruby Interpreter Output:"\nputs "Factorial of 5 is: #{calculate_factorial(5)}"`,
+
+  Go: `package main\n\nimport "fmt"\n\nfunc main() {\n    fmt.Println("ShadowX Go Toolchain Runner")\n    sum := 0\n    for i := 1; i <= 10; i++ {\n        sum += i\n    }\n    fmt.Printf("Sum of 1 to 10: %d\\n", sum)\n}`,
+
+  JSON: `{\n  "appName": "ShadowX",\n  "version": "2.0",\n  "features": [\n    "Leaderboard",\n    "Live Code Runner",\n    "Global Search",\n    "Fix Code AI"\n  ],\n  "status": "Production Ready"\n}`
+};
+
+const fileExts = {
+  Python: 'main.py',
+  JavaScript: 'script.js',
+  SQL: 'query.sql',
+  HTML: 'index.html',
+  'C++': 'main.cpp',
+  C: 'main.c',
+  Java: 'Main.java',
+  PHP: 'script.php',
+  Ruby: 'script.rb',
+  Go: 'main.go',
+  JSON: 'data.json'
+};
+
+const textarea = document.getElementById('codeEditor');
+const lineNumbers = document.querySelector('.line-numbers');
+
+function updateLineNumbers() {
+  const lines = textarea.value.split('\n').length;
+  const numbers = Array(lines).fill(0).map((_, i) => i + 1).join('\n');
+  lineNumbers.textContent = numbers;
+}
+
+textarea.addEventListener('input', updateLineNumbers);
+textarea.addEventListener('scroll', () => {
+  lineNumbers.scrollTop = textarea.scrollTop;
+});
+
+document.getElementById('codeEditor').value = samples.Python;
+updateLineNumbers();
+
+document.getElementById('langSelect').addEventListener('change', (e) => {
+  const lang = e.target.value;
+  document.getElementById('codeEditor').value = samples[lang] || '';
+  document.getElementById('fileNameLabel').innerText = fileExts[lang] || 'file';
+  updateLineNumbers();
+  
+  if (lang === 'HTML') {
+    document.getElementById('terminalOutput').style.display = 'none';
+    document.getElementById('webPreviewFrame').style.display = 'block';
+  } else {
+    document.getElementById('terminalOutput').style.display = 'block';
+    document.getElementById('webPreviewFrame').style.display = 'none';
+  }
+});
+
+function loadSampleSnippet() {
+  const lang = document.getElementById('langSelect').value;
+  document.getElementById('codeEditor').value = samples[lang] || '';
+  updateLineNumbers();
+}
+
+function clearTerminal() {
+  document.getElementById('terminalOutput').innerText = '';
+}
+
+async function executeRunnerCode() {
+  const code = document.getElementById('codeEditor').value.trim();
+  const lang = document.getElementById('langSelect').value;
+  const terminal = document.getElementById('terminalOutput');
+  const webFrame = document.getElementById('webPreviewFrame');
+  const runBtn = document.getElementById('runBtn');
+
+  if (!code) return;
+
+  runBtn.disabled = true;
+  runBtn.innerText = 'Executing...';
+
+  if (lang === 'HTML') {
+    terminal.style.display = 'none';
+    webFrame.style.display = 'block';
+    const doc = webFrame.contentDocument || webFrame.contentWindow.document;
+    doc.open();
+    doc.write(code);
+    doc.close();
+    runBtn.disabled = false;
+    runBtn.innerText = '▶ Run Code';
+    return;
+  }
+
+  terminal.style.display = 'block';
+  webFrame.style.display = 'none';
+  terminal.innerText = 'Compiling & executing script...';
+
+  try {
+    const res = await fetch('/api/run_code', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ code: code, language: lang })
+    });
+    const data = await res.json();
+
+    if (data.is_js) {
+      let logs = [];
+      const originalLog = console.log;
+      console.log = function(...args) {
+        logs.push(args.map(a => typeof a === 'object' ? JSON.stringify(a) : a).join(' '));
+        originalLog.apply(console, args);
+      };
+      try {
+        eval(data.code);
+        terminal.innerText = logs.length > 0 ? logs.join('\n') : 'Code executed with no console.log output.';
+        terminal.style.color = '#34d399';
+      } catch (err) {
+        terminal.innerText = 'JavaScript Runtime Error:\n' + err.message;
+        terminal.style.color = '#f87171';
+      } finally {
+        console.log = originalLog;
+      }
+    } else if (data.success) {
+      terminal.innerText = data.output;
+      terminal.style.color = '#34d399';
+    } else {
+      terminal.innerText = data.output || data.error;
+      terminal.style.color = '#f87171';
+    }
+  } catch (err) {
+    terminal.innerText = 'Execution Failed: ' + err.message;
+    terminal.style.color = '#f87171';
+  } finally {
+    runBtn.disabled = false;
+    runBtn.innerText = '▶ Run Code';
+  }
+}
+</script>
+{% endblock %}

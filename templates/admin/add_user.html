@@ -1,0 +1,43 @@
+{% extends 'base.html' %} 
+{% block title %}Add New User - Admin Panel{% endblock %} 
+
+{% block content %}
+<div class="page-container" style="max-width: 600px; margin: 0 auto; padding: 20px;">
+  <div style="margin-bottom: 24px;">
+    <h2 style="margin: 0; font-size: 1.8rem; font-weight: 700;">Add New User</h2>
+    <p style="margin: 4px 0 0; color: var(--muted);">Create a new developer or administrator account.</p>
+  </div>
+
+  <div style="background: rgba(0, 0, 0, 0.25); border: 1px solid var(--border); border-radius: 16px; padding: 24px;">
+    <form method="POST" action="{{ url_for('admin_add_user') }}" style="display: flex; flex-direction: column; gap: 16px;">
+      <div>
+        <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 6px; color: var(--text);">Username</label>
+        <input type="text" name="username" required placeholder="Username" style="width: 100%; padding: 10px 14px; border-radius: 8px; background: #111827; border: 1px solid var(--border); color: #fff; font-size: 0.9rem;">
+      </div>
+
+      <div>
+        <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 6px; color: var(--text);">Email Address</label>
+        <input type="email" name="email" required placeholder="email@domain.com" style="width: 100%; padding: 10px 14px; border-radius: 8px; background: #111827; border: 1px solid var(--border); color: #fff; font-size: 0.9rem;">
+      </div>
+
+      <div>
+        <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 6px; color: var(--text);">Password</label>
+        <input type="password" name="password" required placeholder="Set password" style="width: 100%; padding: 10px 14px; border-radius: 8px; background: #111827; border: 1px solid var(--border); color: #fff; font-size: 0.9rem;">
+      </div>
+
+      <div>
+        <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 6px; color: var(--text);">Role</label>
+        <select name="role" style="width: 100%; padding: 10px 14px; border-radius: 8px; background: #111827; border: 1px solid var(--border); color: #fff; font-size: 0.9rem; font-weight: 600;">
+          <option value="user">User (Standard Developer)</option>
+          <option value="admin">Administrator</option>
+        </select>
+      </div>
+
+      <div style="display: flex; gap: 12px; margin-top: 10px;">
+        <button type="submit" class="btn btn-primary" style="flex: 1; justify-content: center;">Create User</button>
+        <a href="{{ url_for('admin_users_list') }}" class="btn btn-outline" style="padding: 10px 20px;">Cancel</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
