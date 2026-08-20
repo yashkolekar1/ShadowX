@@ -1,0 +1,28 @@
+# Environment variables & Secrets
+.env
+.env*.local
+client_secret*.json
+
+# Python cache & virtual environments
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+env/
+venv/
+.venv/
+
+# Temporary files
+tempCodeRunnerFile.py
+*.tmp
+*.log
+
+# Node dependencies & builds (if applicable)
+node_modules/
+dist/
+.next/
+
+# OS metadata
+.DS_Store
+Thumbs.db

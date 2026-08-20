@@ -1,0 +1,72 @@
+{% extends 'base.html' %} {% block title %}Manage {{ item_type.capitalize()
+}}s{% endblock %} {% block content %}
+<h2>Manage {{ item_type.capitalize() }}s</h2>
+<p>List of all {{ item_type }}s in the system.</p>
+
+<div style="margin-bottom: 20px">
+  {% if item_type == 'challenge' %}
+  <a href="{{ url_for('admin_add_challenge') }}" class="btn btn-primary"
+    >Add New Challenge</a
+  >
+  {% elif item_type == 'mcq' %}
+  <a href="{{ url_for('admin_add_mcq') }}" class="btn btn-primary"
+    >Add New MCQ</a
+  >
+  {% elif item_type == 'user' %}
+  <!-- No direct add user via admin, users can self-register or admin adds manually if feature is built -->
+  {% endif %}
+</div>
+
+{% if items %}
+<div class="card-grid" style="grid-template-columns: 1fr">
+  {% for item in items %}
+  <div
+    class="card"
+    style="
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+    "
+  >
+    <div>
+      <h4 class="card-title" style="margin-bottom: 5px">
+        {% if item_type == 'challenge' %}{{ item.title }} ({{ item.topic }}) {%
+        elif item_type == 'mcq' %}{{ item.question | truncate(100) }} ({{
+        item.topic }}) {% elif item_type == 'user' %}{{ item.username }} ({{
+        item.email }}) {% else %}{{ item._id }} {% endif %}
+      </h4>
+      {% if item_type == 'challenge' %}
+      <p class="card-description">{{ item.description | truncate(150) }}</p>
+      <small style="color: #a0aec0">Difficulty: {{ item.difficulty }}</small>
+      {% elif item_type == 'mcq' %}
+      <small style="color: #a0aec0">Correct: {{ item.correct_answer }}</small>
+      {% elif item_type == 'user' %}
+      <small style="color: #a0aec0"
+        >Joined: {{ item.get('created_at', 'N/A') }}</small
+      >
+      {% endif %}
+    </div>
+    <div style="display: flex; gap: 10px; margin-top: 15px; margin-bottom: 5px">
+      {% if item_type != 'user' %} {# Users are not edited directly via a
+      dedicated form yet #}
+      <a
+        href="{{ url_for('admin_edit_' + item_type, id=item._id) }}"
+        class="btn btn-secondary btn-sm"
+        >Edit</a
+      >
+      {% endif %}
+      <form
+        action="{{ url_for('admin_delete_' + item_type, id=item._id) }}"
+        method="POST"
+        onsubmit="return confirm('Are you sure you want to delete this {{ item_type }}?');"
+      >
+        <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+      </form>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% else %}
+<p>No {{ item_type }}s found yet. Add some!</p>
+{% endif %} {% endblock %}

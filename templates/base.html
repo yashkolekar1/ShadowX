@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ShadowX - {% block title %}{% endblock %}</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        /* Light theme colors */
+        --bg-light: #ffffff;
+        --card-light: #f3f4f6;
+        --text-light: #1f2937;
+        --muted-light: #6b7280;
+        --border-light: #e5e7eb;
+
+        /* Dark theme colors */
+        --bg-dark: #0f1724;
+        --card-dark: #111827;
+        --text-dark: #e6eef8;
+        --muted-dark: #94a3b8;
+        --border-dark: #2a2f3f;
+
+        /* Common colors */
+        --accent: #7c3aed;
+        --accent-2: #06b6d4;
+        --glass-light: rgba(0, 0, 0, 0.03);
+        --glass-dark: rgba(255, 255, 255, 0.04);
+        --radius: 12px;
+
+        /* Default to light theme */
+        --bg: var(--bg-light);
+        --card: var(--card-light);
+        --text: var(--text-light);
+        --muted: var(--muted-light);
+        --border: var(--border-light);
+        --glass: var(--glass-light);
+      }
+
+      [data-theme="dark"] {
+        --bg: var(--bg-dark);
+        --card: var(--card-dark);
+        --text: var(--text-dark);
+        --muted: var(--muted-dark);
+        --border: var(--border-dark);
+        --glass: var(--glass-dark);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        font-family: "Poppins", system-ui, -apple-system, "Segoe UI", Roboto,
+          "Helvetica Neue", Arial;
+        background: var(--bg);
+        color: var(--text);
+        -webkit-font-smoothing: antialiased;
+        min-height: 100vh;
+        transition: background-color 0.3s ease, color 0.3s ease;
+      }
+
+      header {
+        background: transparent;
+        padding: 18px 24px;
+      }
+      .navbar {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+      }
+      .logo {
+        font-weight: 800;
+        color: var(--text);
+        text-decoration: none;
+        font-size: 1.8rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        font-family: "Poppins", sans-serif;
+        letter-spacing: -0.5px;
+        background: linear-gradient(135deg, var(--accent), var(--accent-2));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        transition: opacity 0.3s ease;
+      }
+      .logo:hover {
+        opacity: 0.9;
+      }
+      .logo .brand-mark {
+        width: 38px;
+        height: 38px;
+        border-radius: 10px;
+        background: linear-gradient(135deg, var(--accent), var(--accent-2));
+        display: inline-block;
+        transition: transform 0.3s ease;
+      }
+      .logo:hover .brand-mark {
+        transform: scale(1.05);
+      }
+
+      .nav-links {
+        display: flex;
+        gap: 14px;
+        align-items: center;
+        list-style: none;
+        margin: 0;
+        padding: 0;
+      }
+      .nav-link {
+        color: var(--muted);
+        text-decoration: none;
+        padding: 8px 12px;
+        border-radius: 10px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        position: relative;
+        border: 1px solid transparent;
+      }
+      .nav-link:hover {
+        background: var(--glass);
+        color: var(--accent);
+        border-color: var(--border);
+      }
+      [data-theme="dark"] .nav-link:hover {
+        color: #fff;
+      }
+
+      main {
+        max-width: 1100px;
+        margin: 28px auto;
+        padding: 0 18px;
+      }
+
+      h1,
+      h2,
+      h3 {
+        color: var(--text);
+      }
+
+      .hero {
+        background: linear-gradient(
+          90deg,
+          rgba(124, 58, 237, 0.12),
+          rgba(6, 182, 212, 0.06)
+        );
+        padding: 48px;
+        border-radius: var(--radius);
+        display: flex;
+        gap: 20px;
+        align-items: center;
+      }
+      .hero .col {
+        flex: 1;
+      }
+      .hero h1 {
+        font-size: 2.4rem;
+        margin: 0 0 8px;
+      }
+      .hero p {
+        color: var(--muted);
+        margin: 0 0 18px;
+      }
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 18px;
+        border-radius: 10px;
+        border: 1px solid transparent;
+        font-weight: 700;
+        cursor: pointer;
+      }
+      .btn-primary {
+        background: linear-gradient(90deg, var(--accent), var(--accent-2));
+        color: white;
+      }
+      .btn-outline {
+        background: transparent;
+        color: var(--accent);
+        border-color: rgba(124, 58, 237, 0.12);
+      }
+
+      .card-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 18px;
+        margin-top: 20px;
+      }
+      .card {
+        background: linear-gradient(
+          180deg,
+          rgba(255, 255, 255, 0.02),
+          rgba(255, 255, 255, 0.01)
+        );
+        padding: 18px;
+        border-radius: 12px;
+        box-shadow: 0 6px 18px rgba(2, 6, 23, 0.6);
+      }
+      .card-title {
+        color: var(--accent);
+        font-weight: 700;
+      }
+
+      .auth-container {
+        max-width: 300px;
+        margin: 10px auto;
+        padding: 10px;
+      }
+
+      .auth-header {
+        text-align: center;
+        margin-bottom: 15px;
+      }
+
+      .auth-box {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        overflow: hidden;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.03);
+      }
+
+      .auth-tabs {
+        display: flex;
+        background: var(--glass);
+        padding: 2px;
+        gap: 2px;
+      }
+
+      .auth-tab {
+        flex: 1;
+        padding: 6px;
+        font-weight: 500;
+        font-size: 0.8rem;
+        background: none;
+        border: none;
+        border-radius: 4px;
+        color: var(--muted);
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+
+      .auth-tab.active {
+        color: var(--accent);
+        background: var(--bg);
+        font-weight: 600;
+      }
+
+      .auth-tab:hover:not(.active) {
+        color: var(--text);
+        background: var(--glass);
+      }
+
+      .auth-form {
+        padding: 12px;
+        display: none;
+      }
+
+      .auth-form.active {
+        display: block;
+      }
+
+      .auth-form h2 {
+        margin: 0;
+        font-size: 1rem;
+        color: var(--text);
+      }
+
+      .auth-subtitle {
+        color: var(--muted);
+        margin: 3px 0 12px;
+        font-size: 0.75rem;
+      }
+
+      .form-grid {
+        display: grid;
+        gap: 20px;
+      }
+
+      .form-group {
+        display: grid;
+        gap: 3px;
+        margin-bottom: 10px;
+      }
+
+      .form-group label {
+        font-size: 0.75rem;
+        font-weight: 500;
+        color: var(--muted);
+      }
+
+      .input-icon {
+        position: relative;
+        display: flex;
+        align-items: center;
+      }
+
+      .input-icon svg {
+        position: absolute;
+        left: 7px;
+        width: 12px;
+        height: 12px;
+        color: var(--muted);
+        opacity: 0.6;
+      }
+
+      .input-icon input {
+        width: 100%;
+        padding: 6px 6px 6px 24px;
+        border-radius: 4px;
+        border: 1px solid var(--border);
+        background: var(--bg);
+        color: var(--text);
+        font-size: 0.8rem;
+        transition: all 0.2s ease;
+      }
+
+      .input-icon input:focus {
+        border-color: var(--accent);
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1);
+      }
+
+      .input-icon input::placeholder {
+        color: var(--muted);
+      }
+
+      .checkbox-group {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 4px;
+        margin: 8px 0;
+      }
+
+      .checkbox-label {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        font-size: 0.7rem;
+        color: var(--muted);
+        cursor: pointer;
+      }
+
+      .checkbox-label input[type="checkbox"] {
+        width: 12px;
+        height: 12px;
+        border-radius: 2px;
+        border: 1px solid var(--border);
+        background: var(--bg);
+        cursor: pointer;
+      }
+
+      .forgot-link {
+        font-size: 0.7rem;
+        color: var(--accent);
+        text-decoration: none;
+        opacity: 0.8;
+        transition: opacity 0.2s ease;
+      }
+
+      .forgot-link:hover {
+        opacity: 1;
+      }
+
+      .auth-submit {
+        width: 100%;
+        padding: 7px;
+        border: none;
+        border-radius: 4px;
+        background: linear-gradient(135deg, var(--accent), var(--accent-2));
+        color: white;
+        font-size: 0.8rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+
+      .auth-submit:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 2px 6px rgba(124, 58, 237, 0.15);
+      }
+
+      .auth-submit:hover {
+        opacity: 0.9;
+      }
+
+      .auth-divider {
+        position: relative;
+        text-align: center;
+        margin: 24px 0;
+      }
+
+      .auth-divider::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 50%;
+        width: 100%;
+        height: 1px;
+        background: var(--border);
+      }
+
+      .auth-divider span {
+        position: relative;
+        padding: 0 12px;
+        background: var(--card);
+        color: var(--muted);
+        font-size: 0.9rem;
+      }
+
+      .social-auth {
+        display: grid;
+        gap: 12px;
+      }
+
+      .social-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        padding: 12px;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        background: var(--bg);
+        color: var(--text);
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .social-btn:hover {
+        background: var(--glass);
+        border-color: var(--accent);
+      }
+
+      .social-btn.google {
+        color: #ea4335;
+      }
+
+      .auth-alert {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        background: rgba(220, 38, 38, 0.08);
+        color: #ef4444;
+        padding: 8px 10px;
+        border-radius: 6px;
+        margin-bottom: 16px;
+        font-size: 0.8rem;
+      }
+
+      .auth-alert svg {
+        width: 16px;
+        height: 16px;
+        flex-shrink: 0;
+        opacity: 0.9;
+      }
+
+      /* Admin specific styles */
+      .admin-auth {
+        max-width: 420px;
+        margin: 0 auto;
+      }
+
+      .admin-header {
+        text-align: center;
+        margin-bottom: 32px;
+      }
+
+      .admin-icon {
+        width: 64px;
+        height: 64px;
+        margin: 0 auto 16px;
+        background: linear-gradient(135deg, var(--accent), var(--accent-2));
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .admin-icon svg {
+        width: 32px;
+        height: 32px;
+        color: white;
+      }
+
+      .password-toggle {
+        position: absolute;
+        right: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        border: none;
+        background: none;
+        padding: 0;
+        color: var(--muted);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .password-toggle svg {
+        width: 20px;
+        height: 20px;
+        position: static;
+      }
+
+      .password-toggle .eye-hide {
+        display: none;
+      }
+
+      .showing-password .eye-show {
+        display: none;
+      }
+
+      .showing-password .eye-hide {
+        display: block;
+      }
+
+      .admin-submit {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+      }
+
+      .admin-submit svg {
+        width: 20px;
+        height: 20px;
+        transition: transform 0.3s ease;
+      }
+
+      .admin-submit:hover svg {
+        transform: translateX(4px);
+      }
+
+      .admin-footer {
+        margin-top: 24px;
+        text-align: center;
+      }
+
+      .back-to-site {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--muted);
+        text-decoration: none;
+        font-size: 0.95rem;
+        transition: color 0.3s ease;
+      }
+
+      .back-to-site svg {
+        width: 16px;
+        height: 16px;
+        transition: transform 0.3s ease;
+      }
+
+      .back-to-site:hover {
+        color: var(--accent);
+      }
+
+      .back-to-site:hover svg {
+        transform: translateX(-4px);
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      .spin {
+        animation: spin 1s linear infinite;
+      }
+
+      /* Input focus and hover effects */
+      .input-icon input:hover {
+        border-color: var(--muted);
+      }
+
+      .input-icon:focus-within svg {
+        color: var(--accent);
+      }
+
+      .checkbox-label:hover span {
+        color: var(--accent);
+      }
+
+      .footer {
+        max-width: 1200px;
+        margin: 36px auto 20px;
+        color: var(--muted);
+        padding: 12px 18px;
+        text-align: center;
+      }
+
+      @media (max-width: 720px) {
+        .hero {
+          flex-direction: column;
+          text-align: center;
+        }
+        .navbar {
+          padding: 8px;
+        }
+      }
+
+      /* Code editor enhancements */
+      @import url("https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap");
+
+      .code-editor {
+        position: relative;
+        flex: 1;
+        display: flex;
+      }
+
+      select:hover {
+        border-color: var(--accent);
+      }
+
+      textarea:focus {
+        outline: none;
+        border-color: var(--accent) !important;
+      }
+
+      textarea::placeholder {
+        color: var(--muted);
+      }
+
+      .btn-primary:hover {
+        opacity: 0.9;
+        transform: translateY(-1px);
+      }
+
+      .btn-primary:active {
+        transform: translateY(0);
+      }
+
+      /* Loading animation */
+      @keyframes analyzing {
+        0% {
+          opacity: 0.5;
+        }
+        50% {
+          opacity: 1;
+        }
+        100% {
+          opacity: 0.5;
+        }
+      }
+
+      #loadingSpinner {
+        animation: analyzing 1.5s ease-in-out infinite;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <nav class="navbar">
+        <a href="{{ url_for('index') }}" class="logo">Shadow<span>X</span></a>
+        <ul class="nav-links">
+          <li class="nav-item">
+            <a
+              href="{{ url_for('index') }}"
+              class="nav-link {% if current_page == 'home' %}active{% endif %}"
+              >Home</a
+            >
+          </li>
+          <li class="nav-item">
+            <a
+              href="{{ url_for('user_challenges') }}"
+              class="nav-link {% if current_page == 'challenges' %}active{% endif %}"
+              >Challenges</a
+            >
+          </li>
+          <li class="nav-item">
+            <a
+              href="{{ url_for('user_mcqs') }}"
+              class="nav-link {% if current_page == 'mcqs' %}active{% endif %}"
+              >MCQs</a
+            >
+          </li>
+          <li class="nav-item">
+            <a
+              href="{{ url_for('user_fix_code') }}"
+              class="nav-link {% if current_page == 'fix_code' %}active{% endif %}"
+              >Fix Code</a
+            >
+          </li>
+          <li class="nav-item">
+            <a
+              href="{{ url_for('user_peer_questions') }}"
+              class="nav-link {% if current_page == 'peer_questions' %}active{% endif %}"
+              >Peer Q&A</a
+            >
+          </li>
+          <li class="nav-item">
+            <a
+              href="{{ url_for('user_puzzles') }}"
+              class="nav-link {% if current_page == 'puzzles' %}active{% endif %}"
+              >Puzzles</a
+            >
+          </li>
+
+          <!-- --- DYNAMIC AUTH/ADMIN LINKS --- -->
+
+          {% if session.get('logged_in') %} {% if session.get('role') == 'admin'
+          %}
+          <li class="nav-item">
+            <a
+              href="{{ url_for('admin_dashboard') }}"
+              class="nav-link admin-link {% if current_page.startswith('admin_') %}active{% endif %}"
+              >Admin</a
+            >
+          </li>
+          <li class="nav-item">
+            <a
+              href="{{ url_for('admin_logout') }}"
+              class="btn btn-danger btn-sm"
+              >Admin Logout</a
+            >
+          </li>
+          {% else %}
+          <li class="nav-item profile-info">
+            Welcome, {{ session.get('username', 'User') }}
+          </li>
+          <li class="nav-item">
+            <a href="{{ url_for('user_logout') }}" class="btn btn-danger btn-sm"
+              >Logout</a
+            >
+          </li>
+          {% endif %} {% else %}
+          <li class="nav-item">
+            <a href="{{ url_for('auth') }}" class="btn btn-primary btn-sm"
+              >Sign In / Register</a
+            >
+          </li>
+          <li class="nav-item">
+            <a
+              href="{{ url_for('admin_login') }}"
+              class="nav-link admin-link {% if current_page == 'admin_login' %}active{% endif %}"
+              >Admin Login</a
+            >
+          </li>
+          {% endif %}
+          <li class="nav-item">
+            <button
+              id="themeToggle"
+              class="btn btn-outline"
+              style="
+                padding: 6px 12px;
+                display: flex;
+                align-items: center;
+                gap: 6px;
+              "
+            >
+              <svg
+                id="sunIcon"
+                style="width: 20px; height: 20px; display: none"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+              >
+                <circle cx="12" cy="12" r="5"></circle>
+                <line x1="12" y1="1" x2="12" y2="3"></line>
+                <line x1="12" y1="21" x2="12" y2="23"></line>
+                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                <line x1="1" y1="12" x2="3" y2="12"></line>
+                <line x1="21" y1="12" x2="23" y2="12"></line>
+                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+              </svg>
+              <svg
+                id="moonIcon"
+                style="width: 20px; height: 20px; display: none"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+              >
+                <path
+                  d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"
+                ></path>
+              </svg>
+            </button>
+          </li>
+        </ul>
+      </nav>
+    </header>
+
+    <script>
+      // Theme toggle functionality
+      const themeToggle = document.getElementById("themeToggle");
+      const sunIcon = document.getElementById("sunIcon");
+      const moonIcon = document.getElementById("moonIcon");
+
+      // Check for saved theme preference
+      const savedTheme = localStorage.getItem("theme") || "light";
+      document.documentElement.setAttribute("data-theme", savedTheme);
+      updateThemeIcons(savedTheme);
+
+      themeToggle.addEventListener("click", () => {
+        const currentTheme =
+          document.documentElement.getAttribute("data-theme");
+        const newTheme = currentTheme === "light" ? "dark" : "light";
+
+        document.documentElement.setAttribute("data-theme", newTheme);
+        localStorage.setItem("theme", newTheme);
+        updateThemeIcons(newTheme);
+      });
+
+      function updateThemeIcons(theme) {
+        if (theme === "light") {
+          sunIcon.style.display = "none";
+          moonIcon.style.display = "block";
+        } else {
+          sunIcon.style.display = "block";
+          moonIcon.style.display = "none";
+        }
+      }
+    </script>
+
+    <main>{% block content %}{% endblock %}</main>
+  </body>
+</html>

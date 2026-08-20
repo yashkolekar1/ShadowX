@@ -1,0 +1,59 @@
+{% extends 'base.html' %} {% block title %}MCQs{% endblock %} {% block content
+%}
+<h2>Multiple Choice Questions</h2>
+<p>Test your knowledge with these quick quizzes.</p>
+
+<div class="filter-buttons">
+  <a
+    href="{{ url_for('user_mcqs') }}"
+    class="btn {% if not selected_topic %}btn-primary{% else %}btn-outline-primary{% endif %}"
+    >All Topics</a
+  >
+  <a
+    href="{{ url_for('user_mcqs', topic='Python') }}"
+    class="btn {% if selected_topic == 'Python' %}btn-primary{% else %}btn-outline-primary{% endif %}"
+    >Python</a
+  >
+  <a
+    href="{{ url_for('user_mcqs', topic='Java') }}"
+    class="btn {% if selected_topic == 'Java' %}btn-primary{% else %}btn-outline-primary{% endif %}"
+    >Java</a
+  >
+  <a
+    href="{{ url_for('user_mcqs', topic='C') }}"
+    class="btn {% if selected_topic == 'C' %}btn-primary{% else %}btn-outline-primary{% endif %}"
+    >C</a
+  >
+  <a
+    href="{{ url_for('user_mcqs', topic='C++') }}"
+    class="btn {% if selected_topic == 'C++' %}btn-primary{% else %}btn-outline-primary{% endif %}"
+    >C++</a
+  >
+  <a
+    href="{{ url_for('user_mcqs', topic='DSA') }}"
+    class="btn {% if selected_topic == 'DSA' %}btn-primary{% else %}btn-outline-primary{% endif %}"
+    >Data Structures & Algorithms</a
+  >
+</div>
+
+{% if mcqs %}
+<div class="card-grid">
+  {% for mcq in mcqs %}
+  <div class="card">
+    <h3 class="card-title">Question: {{ mcq.question }}</h3>
+    <p class="card-description">Options:</p>
+    <ul>
+      {% for option in mcq.options %}
+      <li style="color: #cbd5e0; margin-left: 15px">{{ option }}</li>
+      {% endfor %}
+    </ul>
+    <div class="card-footer">
+      <span>Topic: {{ mcq.topic }}</span>
+      <a href="#" class="btn btn-primary btn-sm">Attempt</a>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% else %}
+<p>No MCQs found for this topic yet. Check back later!</p>
+{% endif %} {% endblock %}

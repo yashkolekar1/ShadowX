@@ -1,0 +1,187 @@
+{% extends 'base.html' %} {% block title %}Peer Q&A{% endblock %} {% block
+content %}
+
+<div
+  class="page-container"
+  style="max-width: 1200px; margin: 0 auto; padding: 20px"
+>
+  <!-- New Question Form in a Floating Card -->
+  <div style="position: sticky; top: 20px; z-index: 10; margin-bottom: 20px">
+    <div
+      style="background: rgba(0, 0, 0, 0.2); border-radius: 8px; padding: 16px"
+    >
+      <div
+        style="
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          margin-bottom: 16px;
+        "
+      >
+        <div
+          style="
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            background: linear-gradient(135deg, #7c3aed, #06b6d4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          "
+        >
+          <svg
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <circle cx="12" cy="12" r="10" />
+            <line x1="12" y1="8" x2="12" y2="16" />
+            <line x1="8" y1="12" x2="16" y2="12" />
+          </svg>
+        </div>
+        <div>
+          <h2 style="margin: 0">Ask a Question</h2>
+          <div style="color: var(--muted); font-size: 0.95rem">
+            Share your programming questions with the community.
+          </div>
+        </div>
+      </div>
+
+      <form
+        method="POST"
+        action="{{ url_for('user_peer_questions') }}"
+        style="display: flex; flex-direction: column; gap: 12px"
+      >
+        <textarea
+          id="question"
+          name="question"
+          placeholder="What's your programming question?"
+          required
+          style="
+            padding: 12px;
+            border-radius: 6px;
+            background: #1a1e2e;
+            border: 1px solid #2a2f3f;
+            color: #fff;
+            font-size: 14px;
+            line-height: 1.5;
+            height: 100px;
+            resize: none;
+          "
+        ></textarea>
+
+        <div style="display: flex; gap: 10px">
+          <input
+            type="text"
+            id="asked_by"
+            name="asked_by"
+            placeholder="Your name (optional)"
+            style="
+              flex: 1;
+              padding: 8px 12px;
+              border-radius: 6px;
+              background: #1a1e2e;
+              border: 1px solid #2a2f3f;
+              color: #fff;
+            "
+          />
+          <button type="submit" class="btn btn-primary">Post Question</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Questions List -->
+  {% if questions %}
+  <div style="display: flex; flex-direction: column; gap: 16px">
+    {% for question in questions %}
+    <div
+      style="background: rgba(0, 0, 0, 0.2); border-radius: 8px; padding: 16px"
+    >
+      <div
+        style="
+          border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+          padding-bottom: 12px;
+          margin-bottom: 12px;
+        "
+      >
+        <h3 style="margin: 0 0 8px; color: var(--accent)">
+          {{ question.question }}
+        </h3>
+        <div style="color: var(--muted); font-size: 0.9rem">
+          Asked by {{ question.get('asked_by', 'Anonymous') }} • {{
+          question.created_at.strftime('%b %d, %Y at %H:%M') }}
+        </div>
+      </div>
+
+      {% if question.answers %}
+      <div style="margin: 16px 0">
+        {% for answer in question.answers %}
+        <div
+          style="
+            background: #1a1e2e;
+            border: 1px solid #2a2f3f;
+            border-radius: 6px;
+            padding: 12px;
+            margin-bottom: 8px;
+          "
+        >
+          <div style="margin-bottom: 8px">{{ answer.text }}</div>
+          <div style="color: var(--muted); font-size: 0.9rem">
+            {{ answer.get('answered_by', 'Anonymous') }} • {{
+            answer.created_at.strftime('%b %d, %Y at %H:%M') }}
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+      {% else %}
+      <div style="color: var(--muted); font-size: 0.95rem; margin: 12px 0">
+        No answers yet. Be the first!
+      </div>
+      {% endif %}
+
+      <!-- Answer Form -->
+      <form
+        method="POST"
+        action="{{ url_for('add_answer_to_peer_question', id=question._id) }}"
+        style="margin-top: 12px"
+      >
+        <div style="display: flex; gap: 10px">
+          <textarea
+            name="answer"
+            placeholder="Write your answer..."
+            required
+            style="
+              flex: 1;
+              padding: 8px 12px;
+              border-radius: 6px;
+              background: #1a1e2e;
+              border: 1px solid #2a2f3f;
+              color: #fff;
+              height: 38px;
+              resize: none;
+            "
+          ></textarea>
+          <button
+            type="submit"
+            class="btn btn-primary"
+            style="white-space: nowrap"
+          >
+            Answer
+          </button>
+        </div>
+      </form>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div style="text-align: center; color: var(--muted); padding: 40px">
+    No questions yet. Be the first to ask!
+  </div>
+  {% endif %}
+</div>
+
+{% endblock %}

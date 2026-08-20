@@ -1,0 +1,220 @@
+{% extends 'base.html' %} {% block title %}Puzzles{% endblock %} {% block
+content %}
+
+<div
+  class="page-container"
+  style="max-width: 1200px; margin: 0 auto; padding: 20px"
+>
+  <!-- New Puzzle Form -->
+  <div style="position: sticky; top: 20px; z-index: 10; margin-bottom: 20px">
+    <div
+      style="background: rgba(0, 0, 0, 0.2); border-radius: 8px; padding: 16px"
+    >
+      <div
+        style="
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          margin-bottom: 16px;
+        "
+      >
+        <div
+          style="
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            background: linear-gradient(135deg, #7c3aed, #06b6d4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          "
+        >
+          <svg
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path
+              d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"
+            />
+          </svg>
+        </div>
+        <div>
+          <h2 style="margin: 0">Add a Programming Puzzle</h2>
+          <div style="color: var(--muted); font-size: 0.95rem">
+            Challenge others with your coding riddles and puzzles.
+          </div>
+        </div>
+      </div>
+
+      <form
+        method="POST"
+        action="{{ url_for('user_puzzles') }}"
+        style="display: flex; flex-direction: column; gap: 12px"
+      >
+        <div style="display: flex; gap: 12px">
+          <div style="flex: 2">
+            <textarea
+              id="question"
+              name="question"
+              placeholder="Your puzzle question (e.g., 'What programming concept is like a blueprint for creating objects?')"
+              required
+              style="
+                width: 100%;
+                padding: 12px;
+                border-radius: 6px;
+                background: #1a1e2e;
+                border: 1px solid #2a2f3f;
+                color: #fff;
+                font-size: 14px;
+                line-height: 1.5;
+                height: 80px;
+                resize: none;
+              "
+            ></textarea>
+          </div>
+          <div style="flex: 1">
+            <input
+              type="text"
+              id="answer"
+              name="answer"
+              placeholder="Answer (hidden from users)"
+              required
+              style="
+                width: 100%;
+                padding: 12px;
+                border-radius: 6px;
+                background: #1a1e2e;
+                border: 1px solid #2a2f3f;
+                color: #fff;
+              "
+            />
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 10px">
+          <input
+            type="text"
+            id="posted_by"
+            name="posted_by"
+            placeholder="Your name (optional)"
+            style="
+              flex: 1;
+              padding: 8px 12px;
+              border-radius: 6px;
+              background: #1a1e2e;
+              border: 1px solid #2a2f3f;
+              color: #fff;
+            "
+          />
+          <button type="submit" class="btn btn-primary">Add Puzzle</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Puzzles Grid -->
+  {% if puzzles %}
+  <div
+    style="
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+      gap: 16px;
+    "
+  >
+    {% for puzzle in puzzles %}
+    <div
+      style="
+        background: rgba(0, 0, 0, 0.2);
+        border-radius: 8px;
+        padding: 16px;
+        display: flex;
+        flex-direction: column;
+      "
+    >
+      <div style="flex: 1">
+        <div
+          style="
+            font-weight: 500;
+            font-size: 1.1rem;
+            margin-bottom: 8px;
+            color: var(--accent);
+          "
+        >
+          {{ puzzle.question }}
+        </div>
+        <div
+          style="color: var(--muted); font-size: 0.9rem; margin-bottom: 16px"
+        >
+          Posted by {{ puzzle.get('posted_by', 'Anonymous') }} • {{
+          puzzle.created_at.strftime('%b %d') }}
+        </div>
+
+        <!-- Answer Form -->
+        <form
+          method="POST"
+          action="{{ url_for('submit_puzzle_answer', id=puzzle._id) }}"
+          style="margin-top: auto"
+        >
+          <div style="display: flex; gap: 8px">
+            <input
+              type="text"
+              name="user_answer"
+              placeholder="Your answer"
+              required
+              style="
+                flex: 1;
+                padding: 8px 12px;
+                border-radius: 6px;
+                background: #1a1e2e;
+                border: 1px solid #2a2f3f;
+                color: #fff;
+              "
+            />
+            <button
+              type="submit"
+              class="btn btn-primary"
+              style="white-space: nowrap"
+            >
+              Submit
+            </button>
+          </div>
+        </form>
+      </div>
+
+      {% if puzzle.attempts %}
+      <div
+        style="
+          margin-top: 16px;
+          padding-top: 12px;
+          border-top: 1px solid rgba(255, 255, 255, 0.1);
+        "
+      >
+        <div style="font-size: 0.9rem; color: var(--muted); margin-bottom: 8px">
+          Your attempts:
+        </div>
+        <div style="display: flex; flex-wrap: wrap; gap: 6px">
+          {% for attempt in puzzle.attempts | reverse %}
+          <div
+            style="padding:4px 8px;border-radius:4px;font-size:0.9rem;background:{{ '#1f2d1f' if attempt.is_correct else '#2d1f1f' }};color:{{ '#9f9' if attempt.is_correct else '#f99' }}"
+          >
+            {{ attempt.guess }}
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+      {% endif %}
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div style="text-align: center; color: var(--muted); padding: 40px">
+    No puzzles yet. Be the first to add one!
+  </div>
+  {% endif %}
+</div>
+
+{% endblock %}

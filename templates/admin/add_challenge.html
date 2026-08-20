@@ -1,0 +1,47 @@
+{% extends 'base.html' %} {% block title %}Add Challenge{% endblock %} {% block
+content %}
+<div class="form-container">
+  <h2>Add New Challenge</h2>
+  <form method="POST" action="{{ url_for('admin_add_challenge') }}">
+    <div class="form-group">
+      <label for="title">Title:</label>
+      <input type="text" id="title" name="title" required />
+    </div>
+    <div class="form-group">
+      <label for="description">Description:</label>
+      <textarea
+        id="description"
+        name="description"
+        rows="8"
+        required
+      ></textarea>
+    </div>
+    <div class="form-group">
+      <label for="topic">Topic:</label>
+      <select id="topic" name="topic" required>
+        <option value="Python">Python</option>
+        <option value="JavaScript">JavaScript</option>
+        <option value="C">C</option>
+        <option value="C++">C++</option>
+        <option value="Algorithms">Algorithms</option>
+        <option value="Data Structures">Data Structures</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label for="difficulty">Difficulty:</label>
+      <select id="difficulty" name="difficulty" required>
+        <option value="Easy">Easy</option>
+        <option value="Medium">Medium</option>
+        <option value="Hard">Hard</option>
+      </select>
+    </div>
+    <button type="submit" class="btn btn-primary">Add Challenge</button>
+    <a
+      href="{{ url_for('admin_challenges_list') }}"
+      class="btn btn-outline-primary"
+      style="margin-left: 10px"
+      >Cancel</a
+    >
+  </form>
+</div>
+{% endblock %}

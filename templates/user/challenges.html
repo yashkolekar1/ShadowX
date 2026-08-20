@@ -1,0 +1,61 @@
+{% extends 'base.html' %} {% block title %}Challenges{% endblock %} {% block
+content %}
+<h2>Coding Challenges</h2>
+<p>Improve your coding skills by solving problems.</p>
+
+<div class="filter-buttons">
+  <a
+    href="{{ url_for('user_challenges') }}"
+    class="btn {% if not selected_topic %}btn-primary{% else %}btn-outline-primary{% endif %}"
+    >All Topics</a
+  >
+  <a
+    href="{{ url_for('user_challenges', topic='Python') }}"
+    class="btn {% if selected_topic == 'Python' %}btn-primary{% else %}btn-outline-primary{% endif %}"
+    >Python</a
+  >
+  <a
+    href="{{ url_for('user_challenges', topic='JavaScript') }}"
+    class="btn {% if selected_topic == 'JavaScript' %}btn-primary{% else %}btn-outline-primary{% endif %}"
+    >JavaScript</a
+  >
+  <a
+    href="{{ url_for('user_challenges', topic='C') }}"
+    class="btn {% if selected_topic == 'C' %}btn-primary{% else %}btn-outline-primary{% endif %}"
+    >C</a
+  >
+  <a
+    href="{{ url_for('user_challenges', topic='C++') }}"
+    class="btn {% if selected_topic == 'C++' %}btn-primary{% else %}btn-outline-primary{% endif %}"
+    >C++</a
+  >
+  <a
+    href="{{ url_for('user_challenges', topic='Algorithms') }}"
+    class="btn {% if selected_topic == 'Algorithms' %}btn-primary{% else %}btn-outline-primary{% endif %}"
+    >Algorithms</a
+  >
+  <a
+    href="{{ url_for('user_challenges', topic='Data Structures') }}"
+    class="btn {% if selected_topic == 'Data Structures' %}btn-primary{% else %}btn-outline-primary{% endif %}"
+    >Data Structures</a
+  >
+</div>
+
+{% if challenges %}
+<div class="card-grid">
+  {% for challenge in challenges %}
+  <div class="card">
+    <h3 class="card-title">{{ challenge.title }}</h3>
+    <p class="card-description">{{ challenge.description }}</p>
+    <div class="card-footer">
+      <span>Topic: {{ challenge.topic }}</span>
+      <span>Difficulty: {{ challenge.difficulty }}</span>
+      <a href="#" class="btn btn-primary btn-sm">Solve</a>
+      <!-- Link to actual challenge page -->
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% else %}
+<p>No challenges found for this topic yet. Check back later!</p>
+{% endif %} {% endblock %}

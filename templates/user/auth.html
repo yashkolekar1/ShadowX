@@ -1,0 +1,377 @@
+{% extends 'base.html' %} {% block title %}Sign In / Register{% endblock %} {%
+block content %}
+
+<div class="auth-container">
+  <div class="auth-header">
+    <div class="auth-icon">
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.5"
+        style="width: 24px; height: 24px; color: var(--accent); opacity: 0.9"
+      >
+        <path
+          d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-2-5.83V7h4v7.17l-2 2-2-2z"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        />
+      </svg>
+    </div>
+    <h1 style="margin: 0; font-size: 1.1rem; color: var(--text)">
+      Welcome to
+      <span
+        style="
+          background: linear-gradient(135deg, var(--accent), var(--accent-2));
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+        "
+        >ShadowX</span
+      >
+    </h1>
+    <p style="color: var(--muted); margin: 4px 0 0; font-size: 0.75rem">
+      Join our community of developers
+    </p>
+  </div>
+
+  <div class="auth-box">
+    <div class="auth-tabs">
+      <button class="auth-tab active" data-tab="signin">Sign In</button>
+      <button class="auth-tab" data-tab="register">Register</button>
+    </div>
+
+    <!-- Sign In Form -->
+    <div class="auth-form active" id="signinForm">
+      <h2>Welcome Back</h2>
+      <p class="auth-subtitle">Sign in to your account</p>
+
+      {% if error %}
+      <div class="auth-alert">
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.5"
+        >
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="8" x2="12" y2="12"></line>
+          <line x1="12" y1="16" x2="12.01" y2="16"></line>
+        </svg>
+        {{ error }}
+      </div>
+      {% endif %}
+
+      <form method="POST" action="{{ url_for('auth') }}" class="form-grid">
+        <input type="hidden" name="form_type" value="login" />
+        <div class="form-group">
+          <label for="login-username">Username</label>
+          <div class="input-icon">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+              <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+            <input
+              type="text"
+              id="login-username"
+              name="username"
+              placeholder="Enter your username"
+              required
+            />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="login-password">Password</label>
+          <div class="input-icon">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+            </svg>
+            <input
+              type="password"
+              id="login-password"
+              name="password"
+              placeholder="Enter your password"
+              required
+            />
+            <button
+              type="button"
+              class="password-toggle"
+              data-for="login-password"
+            >
+              <svg
+                class="eye-show"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                <circle cx="12" cy="12" r="3"></circle>
+              </svg>
+              <svg
+                class="eye-hide"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path
+                  d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"
+                ></path>
+                <line x1="1" y1="1" x2="23" y2="23"></line>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="checkbox-group">
+          <label class="checkbox-label">
+            <input type="checkbox" name="remember" /> Remember me
+          </label>
+          <a href="#" class="forgot-link">Forgot Password?</a>
+        </div>
+
+        <button type="submit" class="auth-submit">
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
+            <polyline points="10 17 15 12 10 7"></polyline>
+            <line x1="15" y1="12" x2="3" y2="12"></line>
+          </svg>
+          Sign In
+        </button>
+      </form>
+    </div>
+
+    <!-- Register Form -->
+    <div class="auth-form" id="registerForm">
+      <h2>Create Account</h2>
+      <p class="auth-subtitle">Join our community today</p>
+
+      <form method="POST" action="{{ url_for('auth') }}" class="form-grid">
+        <input type="hidden" name="form_type" value="register" />
+        <div class="form-group">
+          <label for="register-username">Username</label>
+          <div class="input-icon">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+              <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+            <input
+              type="text"
+              id="register-username"
+              name="username"
+              placeholder="Choose a username"
+              required
+            />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="register-email">Email</label>
+          <div class="input-icon">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path
+                d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"
+              ></path>
+              <polyline points="22,6 12,13 2,6"></polyline>
+            </svg>
+            <input
+              type="email"
+              id="register-email"
+              name="email"
+              placeholder="Enter your email"
+              required
+            />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="register-password">Password</label>
+          <div class="input-icon">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+            </svg>
+            <input
+              type="password"
+              id="register-password"
+              name="password"
+              placeholder="Create a password"
+              required
+            />
+            <button
+              type="button"
+              class="password-toggle"
+              data-for="register-password"
+            >
+              <svg
+                class="eye-show"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                <circle cx="12" cy="12" r="3"></circle>
+              </svg>
+              <svg
+                class="eye-hide"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path
+                  d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"
+                ></path>
+                <line x1="1" y1="1" x2="23" y2="23"></line>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="register-confirm">Confirm Password</label>
+          <div class="input-icon">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+            </svg>
+            <input
+              type="password"
+              id="register-confirm"
+              name="confirm_password"
+              placeholder="Confirm your password"
+              required
+            />
+            <button
+              type="button"
+              class="password-toggle"
+              data-for="register-confirm"
+            >
+              <svg
+                class="eye-show"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                <circle cx="12" cy="12" r="3"></circle>
+              </svg>
+              <svg
+                class="eye-hide"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path
+                  d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"
+                ></path>
+                <line x1="1" y1="1" x2="23" y2="23"></line>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="checkbox-group">
+          <label class="checkbox-label">
+            <input type="checkbox" name="terms" required />
+            I agree to the Terms & Conditions
+          </label>
+        </div>
+
+        <button type="submit" class="auth-submit">
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+            <circle cx="8.5" cy="7" r="4"></circle>
+            <line x1="20" y1="8" x2="20" y2="14"></line>
+            <line x1="23" y1="11" x2="17" y2="11"></line>
+          </svg>
+          Create Account
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Tab switching functionality
+  const tabs = document.querySelectorAll(".auth-tab");
+  const forms = document.querySelectorAll(".auth-form");
+
+  tabs.forEach((tab) => {
+    tab.addEventListener("click", () => {
+      const target = tab.dataset.tab;
+
+      // Update active states
+      tabs.forEach((t) => t.classList.remove("active"));
+      forms.forEach((f) => f.classList.remove("active"));
+
+      tab.classList.add("active");
+      document.getElementById(target + "Form").classList.add("active");
+    });
+  });
+
+  // Password visibility toggle
+  const toggles = document.querySelectorAll(".password-toggle");
+
+  toggles.forEach((toggle) => {
+    toggle.addEventListener("click", () => {
+      const inputId = toggle.dataset.for;
+      const input = document.getElementById(inputId);
+
+      if (input.type === "password") {
+        input.type = "text";
+        toggle.classList.add("showing-password");
+      } else {
+        input.type = "password";
+        toggle.classList.remove("showing-password");
+      }
+    });
+  });
+</script>
+
+{% endblock %}

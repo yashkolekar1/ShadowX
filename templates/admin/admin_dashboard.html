@@ -1,0 +1,166 @@
+{% extends 'base.html' %} {% block title %}Admin Dashboard{% endblock %} {%
+block content %}
+<h2>Admin Dashboard</h2>
+<p>Manage users, content, and system settings.</p>
+
+<div class="card-grid">
+  <div class="card">
+    <h3 class="card-title">Total Users</h3>
+    <p
+      style="font-size: 2.5rem; font-weight: 700; color: var(--secondary-color)"
+    >
+      {{ users_count }}
+    </p>
+    <div class="card-footer">
+      <a
+        href="{{ url_for('admin_users_list') }}"
+        class="btn btn-outline-primary btn-sm"
+        >Manage Users</a
+      >
+    </div>
+  </div>
+  <div class="card">
+    <h3 class="card-title">Challenges</h3>
+    <p style="font-size: 2.5rem; font-weight: 700; color: var(--primary-color)">
+      {{ challenges_count }}
+    </p>
+    <div class="card-footer">
+      <a
+        href="{{ url_for('admin_challenges_list') }}"
+        class="btn btn-outline-primary btn-sm"
+        >Manage Challenges</a
+      >
+      <a
+        href="{{ url_for('admin_add_challenge') }}"
+        class="btn btn-primary btn-sm"
+        >Add New</a
+      >
+    </div>
+  </div>
+  <div class="card">
+    <h3 class="card-title">MCQs</h3>
+    <p style="font-size: 2.5rem; font-weight: 700; color: var(--primary-color)">
+      {{ mcqs_count }}
+    </p>
+    <div class="card-footer">
+      <a
+        href="{{ url_for('admin_mcqs_list') }}"
+        class="btn btn-outline-primary btn-sm"
+        >Manage MCQs</a
+      >
+      <a href="{{ url_for('admin_add_mcq') }}" class="btn btn-primary btn-sm"
+        >Add New</a
+      >
+    </div>
+  </div>
+  <div class="card">
+    <h3 class="card-title">Peer Questions</h3>
+    <p style="font-size: 2.5rem; font-weight: 700; color: var(--primary-color)">
+      {{ peer_questions_count }}
+    </p>
+    <div class="card-footer">
+      <a
+        href="{{ url_for('user_peer_questions') }}"
+        class="btn btn-outline-primary btn-sm"
+        >View Questions</a
+      >
+    </div>
+  </div>
+  <div class="card">
+    <h3 class="card-title">Puzzles</h3>
+    <p style="font-size: 2.5rem; font-weight: 700; color: var(--primary-color)">
+      {{ puzzles_count }}
+    </p>
+    <div class="card-footer">
+      <a
+        href="{{ url_for('user_puzzles') }}"
+        class="btn btn-outline-primary btn-sm"
+        >View Puzzles</a
+      >
+    </div>
+  </div>
+</div>
+
+<div style="margin-top: 50px">
+  <h3>Recent Activity</h3>
+  <div
+    class="card-grid"
+    style="grid-template-columns: repeat(auto-fill, minmax(350px, 1fr))"
+  >
+    {% if recent_challenges %}
+    <div class="card">
+      <h4 class="card-title">New Challenges</h4>
+      <ul style="list-style-type: none; padding: 0">
+        {% for item in recent_challenges %}
+        <li
+          style="
+            margin-bottom: 8px;
+            border-bottom: 1px dotted rgba(255, 255, 255, 0.1);
+            padding-bottom: 8px;
+          "
+        >
+          {{ item.title }} ({{ item.topic }})
+        </li>
+        {% endfor %}
+      </ul>
+      <div class="card-footer">
+        <a
+          href="{{ url_for('admin_challenges_list') }}"
+          class="btn btn-outline-primary btn-sm"
+          >View All</a
+        >
+      </div>
+    </div>
+    {% endif %} {% if recent_mcqs %}
+    <div class="card">
+      <h4 class="card-title">New MCQs</h4>
+      <ul style="list-style-type: none; padding: 0">
+        {% for item in recent_mcqs %}
+        <li
+          style="
+            margin-bottom: 8px;
+            border-bottom: 1px dotted rgba(255, 255, 255, 0.1);
+            padding-bottom: 8px;
+          "
+        >
+          {{ item.question }} ({{ item.topic }})
+        </li>
+        {% endfor %}
+      </ul>
+      <div class="card-footer">
+        <a
+          href="{{ url_for('admin_mcqs_list') }}"
+          class="btn btn-outline-primary btn-sm"
+          >View All</a
+        >
+      </div>
+    </div>
+    {% endif %} {% if recent_users %}
+    <div class="card">
+      <h4 class="card-title">New Users</h4>
+      <ul style="list-style-type: none; padding: 0">
+        {% for user in recent_users %}
+        <li
+          style="
+            margin-bottom: 8px;
+            border-bottom: 1px dotted rgba(255, 255, 255, 0.1);
+            padding-bottom: 8px;
+          "
+        >
+          {{ user.username }} ({{ user.email }})
+        </li>
+        {% endfor %}
+      </ul>
+      <div class="card-footer">
+        <a
+          href="{{ url_for('admin_users_list') }}"
+          class="btn btn-outline-primary btn-sm"
+          >View All</a
+        >
+      </div>
+    </div>
+    {% endif %}
+  </div>
+</div>
+
+{% endblock %}

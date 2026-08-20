@@ -1,0 +1,50 @@
+{% extends 'base.html' %} {% block title %}Add MCQ{% endblock %} {% block
+content %}
+<div class="form-container">
+  <h2>Add New MCQ</h2>
+  <form method="POST" action="{{ url_for('admin_add_mcq') }}">
+    <div class="form-group">
+      <label for="question">Question:</label>
+      <textarea id="question" name="question" rows="4" required></textarea>
+    </div>
+    <div class="form-group">
+      <label for="option1">Option 1:</label>
+      <input type="text" id="option1" name="option1" required />
+    </div>
+    <div class="form-group">
+      <label for="option2">Option 2:</label>
+      <input type="text" id="option2" name="option2" required />
+    </div>
+    <div class="form-group">
+      <label for="option3">Option 3:</label>
+      <input type="text" id="option3" name="option3" required />
+    </div>
+    <div class="form-group">
+      <label for="option4">Option 4:</label>
+      <input type="text" id="option4" name="option4" required />
+    </div>
+    <div class="form-group">
+      <label for="correct_answer"
+        >Correct Answer (must match one of the options):</label
+      >
+      <input type="text" id="correct_answer" name="correct_answer" required />
+    </div>
+    <div class="form-group">
+      <label for="topic">Topic:</label>
+      <select id="topic" name="topic" required>
+        <option value="Python">Python</option>
+        <option value="Java">Java</option>
+        <option value="C">C</option>
+        <option value="C++">C++</option>
+      </select>
+    </div>
+    <button type="submit" class="btn btn-primary">Add MCQ</button>
+    <a
+      href="{{ url_for('admin_mcqs_list') }}"
+      class="btn btn-outline-primary"
+      style="margin-left: 10px"
+      >Cancel</a
+    >
+  </form>
+</div>
+{% endblock %}

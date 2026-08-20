@@ -1,0 +1,191 @@
+{% extends 'base.html' %} {% block title %}{{ 'Register' if mode == 'register'
+else 'Sign In' }} — ShadowX{% endblock %} {% block content %}
+
+<div class="form-container">
+  <div class="form-hdr">
+    <div
+      class="brand-mark"
+      style="
+        width: 44px;
+        height: 44px;
+        border-radius: 10px;
+        background: linear-gradient(135deg, #7c3aed, #06b6d4);
+      "
+    ></div>
+    <div>
+      <h2 style="margin: 0">
+        {{ 'Create Account' if mode == 'register' else 'Welcome Back' }} —
+        Shadow<span style="color: #06b6d4">X</span>
+      </h2>
+      <div style="color: var(--muted); font-size: 0.95rem">
+        {{ 'Join our coding community today.' if mode == 'register' else 'Sign
+        in to continue your learning journey.' }}
+      </div>
+    </div>
+  </div>
+
+  {% with messages = get_flashed_messages(with_categories=True) %} {% if
+  messages %} {% for category, msg in messages %}
+  <div
+    class="alert {{ 'alert-error' if category == 'error' else 'alert-success' }}"
+    style="margin:12px 0;padding:10px;border-radius:8px;background:{{ '#2d1f1f' if category == 'error' else '#1f2d1f' }};color:{{ '#ffd' if category == 'error' else '#dfd' }}"
+  >
+    {{ msg }}
+  </div>
+  {% endfor %} {% endif %} {% endwith %} {% if google_configured %}
+  <a
+    class="google-btn"
+    href="{{ url_for('google_login') }}"
+    style="
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      padding: 12px;
+      font-size: 1.05rem;
+      background: #fff;
+      color: #444;
+      border-radius: 6px;
+      text-decoration: none;
+      margin: 12px 0;
+      transition: background-color 0.15s;
+    "
+  >
+    <img
+      src="https://www.gstatic.com/devrel-devsite/prod/vc3f0a3b6d0a0d6d2d0e6f1f7f7a7e9f8/svg/google-logo.svg"
+      alt="Google"
+      style="width: 20px; height: 20px; margin-right: 10px"
+    />
+    Continue with Google
+  </a>
+  {% else %}
+  <button class="btn btn-outline" disabled>
+    Google Sign In (Not Configured)
+  </button>
+  <div style="margin: 12px 0; color: var(--muted); font-size: 0.95rem">
+    Google Sign In is not configured. Set <code>GOOGLE_CLIENT_ID</code> and
+    <code>GOOGLE_CLIENT_SECRET</code> in a <code>.env</code> file and restart
+    the app.
+  </div>
+  {% endif %}
+
+  <div style="text-align: center; margin: 20px 0; position: relative">
+    <hr
+      style="
+        border: none;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        margin: 0;
+      "
+    />
+    <span
+      style="
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: var(--background);
+        padding: 0 10px;
+        color: var(--muted);
+        font-size: 0.9rem;
+      "
+      >or</span
+    >
+  </div>
+
+  <form
+    method="POST"
+    action="{{ url_for('user_register' if mode == 'register' else 'user_login') }}"
+    class="form-stack"
+  >
+    {% if mode == 'register' %}
+    <div class="form-group">
+      <label for="username">Username</label>
+      <input
+        type="text"
+        id="username"
+        name="username"
+        required
+        placeholder="Choose a username"
+        class="form-control"
+      />
+    </div>
+    {% endif %}
+
+    <div class="form-group">
+      <label for="email">Email</label>
+      <input
+        type="email"
+        id="email"
+        name="email"
+        required
+        placeholder="Your email address"
+        class="form-control"
+      />
+    </div>
+
+    <div class="form-group">
+      <label for="password">Password</label>
+      <input
+        type="password"
+        id="password"
+        name="password"
+        required
+        placeholder="Choose a secure password"
+        class="form-control"
+      />
+    </div>
+
+    {% if mode == 'register' %}
+    <div class="form-group">
+      <label for="confirm_password">Confirm Password</label>
+      <input
+        type="password"
+        id="confirm_password"
+        name="confirm_password"
+        required
+        placeholder="Type password again"
+        class="form-control"
+      />
+    </div>
+    {% endif %}
+
+    <button
+      type="submit"
+      class="btn btn-primary"
+      style="width: 100%; margin-top: 8px"
+    >
+      {{ 'Create Account' if mode == 'register' else 'Sign In' }}
+    </button>
+  </form>
+
+  <div style="text-align: center; margin-top: 20px">
+    <a
+      href="{{ url_for('user_login' if mode == 'register' else 'user_register') }}"
+      style="
+        color: var(--muted);
+        text-decoration: underline;
+        font-size: 0.92rem;
+      "
+    >
+      {{ 'Already have an account? Sign in' if mode == 'register' else 'Need an
+      account? Register' }}
+    </a>
+  </div>
+
+  <div style="margin-top: 14px; text-align: center">
+    <a
+      href="{{ url_for('debug_google_link') }}"
+      style="
+        color: var(--muted);
+        text-decoration: underline;
+        font-size: 0.92rem;
+      "
+    >
+      Test OAuth (open in private window)
+    </a>
+  </div>
+</div>
+
+<div class="footer">Built with ❤️ — ShadowX</div>
+
+{% endblock %}

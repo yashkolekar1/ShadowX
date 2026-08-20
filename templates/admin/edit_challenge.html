@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block title %}Edit Challenge{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <h2>Edit Challenge: {{ challenge.title }}</h2>
+    <form method="POST" action="{{ url_for('admin_edit_challenge', id=challenge._id) }}">
+        <div class="form-group">
+            <label for="title">Title:</label>
+            <input type="text" id="title" name="title" value="{{ challenge.title }}" required>
+        </div>
+        <div class="form-group">
+            <label for="description">Description:</label>
+            <textarea id="description" name="description" rows="8" required>{{ challenge.description }}</textarea>
+        </div>
+        <div class="form-group">
+            <label for="topic">Topic:</label>
+            <input type="text" id="topic" name="topic" value="{{ challenge.topic }}" required>
+        </div>
+        <div class="form-group">
+            <label for="difficulty">Difficulty:</label>
+            <select id="difficulty" name="difficulty" required>
+                <option value="Easy" {% if challenge.difficulty == 'Easy' %}selected{% endif %}>Easy</option>
+                <option value="Medium" {% if challenge.difficulty == 'Medium' %}selected{% endif %}>Medium</option>
+                <option value="Hard" {% if challenge.difficulty == 'Hard' %}selected{% endif %}>Hard</option>
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary">Update Challenge</button>
+        <a href="{{ url_for('admin_challenges_list') }}" class="btn btn-outline-primary" style="margin-left: 10px;">Cancel</a>
+    </form>
+</div>
+{% endblock %}
